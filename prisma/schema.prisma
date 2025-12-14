@@ -14,6 +14,7 @@ model Booking {
   studentEmail String
   message      String?
   startTime    DateTime @unique // Ensures no overlapping sessions globally
+  studentTimezone String @default("UTC") // Captured from user's browser
   meetingLink  String?  // Can be null if generation fails or pending
   createdAt    DateTime @default(now())
 }

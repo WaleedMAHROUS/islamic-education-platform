@@ -97,6 +97,7 @@ function BookingContent() {
                     studentEmail: values.email,
                     message: values.message,
                     startTime: bookingDate.toISOString(),
+                    studentTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
                 }),
             });
 

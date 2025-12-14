@@ -6,7 +6,11 @@ import { sendEmail } from '@/lib/email';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { serviceType, studentName, studentEmail, startTime, message } = body;
+        const { serviceType, studentName, studentEmail, startTime, message, studentTimezone } = body;
+
+        // Default to UTC if not provided (fallback)
+        const userTz = studentTimezone || 'UTC';
+        const teacherTz = 'Asia/Tokyo';
 
         if (!serviceType || !studentName || !studentEmail || !startTime) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
@@ -15,7 +19,6 @@ export async function POST(request: NextRequest) {
         const startDateTime = new Date(startTime);
 
         // Transactional check: ensure slot is free
-        // Prisma doesn't support convenient locks in SQLite easily, but @unique constraint handles race at DB level
         const existing = await db.booking.findUnique({
             where: { startTime: startDateTime },
         });
@@ -35,9 +38,24 @@ export async function POST(request: NextRequest) {
                 studentEmail,
                 message,
                 startTime: startDateTime,
+                studentTimezone: userTz,
                 meetingLink,
             },
         });
+
+        // Format Date for Teacher (Tokyo)
+        const teacherDate = new Date(startTime).toLocaleString('en-US', {
+            timeZone: teacherTz,
+            dateStyle: 'full',
+            timeStyle: 'short',
+        }) + ` (${teacherTz})`;
+
+        // Format Date for Student (Local)
+        const studentDate = new Date(startTime).toLocaleString('en-US', {
+            timeZone: userTz,
+            dateStyle: 'full',
+            timeStyle: 'short',
+        }) + ` (${userTz})`;
 
         // Send Emails (Non-blocking usually, but await for prototype)
         try {
@@ -45,14 +63,14 @@ export async function POST(request: NextRequest) {
             await sendEmail({
                 to: 'theislamicnewnormal@gmail.com',
                 subject: `New Booking: ${serviceType}`,
-                body: `You have a new session for ${serviceType} with ${studentName}.\nTime: ${startDateTime.toLocaleString()}\nTeams Link: ${meetingLink}\nMessage: ${message || 'N/A'}`
+                body: `You have a new session for ${serviceType} with ${studentName}.\nTime: ${teacherDate}\nTeams Link: ${meetingLink}\nMessage: ${message || 'N/A'}`
             });
 
             // 2. To Student
             await sendEmail({
                 to: studentEmail,
                 subject: `Booking Confirmed: ${serviceType}`,
-                body: `Dear ${studentName},\nYour session is confirmed.\nTime: ${startDateTime.toLocaleString()}\nSubject: ${serviceType}\nJoin here: ${meetingLink}`
+                body: `Dear ${studentName},\nYour session is confirmed.\nTime: ${studentDate}\nSubject: ${serviceType}\nJoin here: ${meetingLink}`
             });
         } catch (emailError) {
             console.error('Failed to send emails', emailError);

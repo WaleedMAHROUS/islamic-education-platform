@@ -1,6 +1,4 @@
-import { Resend } from 'resend';
-
-const resend = new Resend(process.env.RESEND_API_KEY);
+import nodemailer from 'nodemailer';
 
 interface EmailPayload {
     to: string;
@@ -9,29 +7,35 @@ interface EmailPayload {
 }
 
 export async function sendEmail({ to, subject, body }: EmailPayload): Promise<void> {
-    if (!process.env.RESEND_API_KEY) {
-        console.warn("RESEND_API_KEY is missing. Falling back to mock email.");
-        console.log(`[MOCK EMAIL] To: ${to}, Subject: ${subject}`);
+    const user = process.env.GMAIL_USER;
+    const pass = process.env.GMAIL_APP_PASSWORD;
+
+    if (!user || !pass) {
+        console.warn("GMAIL_USER or GMAIL_APP_PASSWORD missing. Logging email instead.");
+        console.log(`[MOCK EMAIL via Nodemailer] To: ${to}, Subject: ${subject}`);
         return;
     }
 
+    const transporter = nodemailer.createTransport({
+        service: 'gmail',
+        auth: {
+            user: user,
+            pass: pass,
+        },
+    });
+
     try {
-        const data = await resend.emails.send({
-            from: 'onboarding@resend.dev', // Default sender for Resend free tier (Testing)
+        const info = await transporter.sendMail({
+            from: `"Islamic Education Platform" <${user}>`,
             to: to,
             subject: subject,
             text: body,
-            // html: body.replace(/\n/g, '<br>') // Optional: simple text-to-html conversion if needed
+            // html: body.replace(/\n/g, '<br>'), // Optional
         });
 
-        if (data.error) {
-            console.error('Resend API Error:', data.error);
-            throw new Error(data.error.message);
-        }
-
-        console.log(`[EMAIL SENT] ID: ${data.data?.id} To: ${to}`);
+        console.log(`[EMAIL SENT] MessageId: ${info.messageId} To: ${to}`);
     } catch (error) {
         console.error('Failed to send email:', error);
-        // Don't crash the request for email failure, but log it.
+        // Don't crash the request
     }
 }
