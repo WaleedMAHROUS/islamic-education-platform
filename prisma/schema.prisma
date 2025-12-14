@@ -1,0 +1,19 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Booking {
+  id           Int      @id @default(autoincrement())
+  serviceType  String   // "Quran", "IslamicStudies", "Arabic"
+  studentName  String
+  studentEmail String
+  message      String?
+  startTime    DateTime @unique // Ensures no overlapping sessions globally
+  meetingLink  String?  // Can be null if generation fails or pending
+  createdAt    DateTime @default(now())
+}
