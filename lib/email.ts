@@ -20,7 +20,7 @@ export async function sendEmail({ to, subject, body }: EmailPayload): Promise<vo
         service: 'gmail',
         auth: {
             user: user,
-            pass: pass,
+            pass: pass.replace(/\s+/g, ''), // Remove spaces if user copied them directly
         },
     });
 
