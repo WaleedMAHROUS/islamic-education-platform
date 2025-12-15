@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
-import { ArrowLeft, CheckCircle2, Loader2, Calendar as CalendarIcon, Clock } from "lucide-react";
+import { ArrowLeft, CheckCircle2, Loader2, Calendar as CalendarIcon, Clock, Video } from "lucide-react";
 
 // Form Schema
 const formSchema = z.object({
@@ -160,7 +160,7 @@ function BookingContent() {
                     <div className="bg-slate-100 p-4 rounded-lg mb-6 text-left border border-slate-200">
                         <p className="text-xs text-slate-500 uppercase font-bold mb-2">Meeting Link</p>
                         <a href={meetingLink} target="_blank" rel="noopener noreferrer" className="text-blue-600 hover:underline break-all text-sm font-semibold flex items-center gap-2">
-                            Join Teams Meeting
+                            Google Meet Session
                         </a>
                     </div>
                     <Button onClick={() => router.push('/')} className="w-full">
@@ -195,6 +195,10 @@ function BookingContent() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 md:flex flex-col md:flex-row">
+                            <div className="flex items-center gap-3 text-slate-600 mb-6 bg-slate-50 p-3 rounded-lg border border-slate-100">
+                                <Video className="w-5 h-5 text-blue-500" />
+                                <span>Online via Google Meet</span>
+                            </div>
                             <div className="p-6 flex justify-center border-b md:border-b-0 md:border-r border-slate-100">
                                 <Calendar
                                     mode="single"
