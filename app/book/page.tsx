@@ -195,11 +195,11 @@ function BookingContent() {
                             </CardTitle>
                         </CardHeader>
                         <CardContent className="p-0 md:flex flex-col md:flex-row">
-                            <div className="flex items-center gap-3 text-slate-600 mb-6 bg-slate-50 p-3 rounded-lg border border-slate-100">
-                                <Video className="w-5 h-5 text-blue-500" />
-                                <span>Online via Google Meet</span>
-                            </div>
-                            <div className="p-6 flex justify-center border-b md:border-b-0 md:border-r border-slate-100">
+                            <div className="p-6 flex flex-col items-center border-b md:border-b-0 md:border-r border-slate-100">
+                                <div className="flex items-center gap-3 text-slate-600 mb-6 bg-slate-50 p-3 rounded-lg border border-slate-100 w-full justify-center">
+                                    <Video className="w-5 h-5 text-blue-500" />
+                                    <span>Online via Google Meet</span>
+                                </div>
                                 <Calendar
                                     mode="single"
                                     selected={date}
