@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 
+// Public API: Get available slots
 export async function GET(request: NextRequest) {
     const { searchParams } = new URL(request.url);
     const start = searchParams.get('start');
@@ -11,6 +12,18 @@ export async function GET(request: NextRequest) {
     }
 
     try {
+        // 1. Get Teacher's Open Slots
+        const openSlots = await db.availability.findMany({
+            where: {
+                startTime: {
+                    gte: new Date(start),
+                    lte: new Date(end),
+                },
+            },
+            select: { startTime: true },
+        });
+
+        // 2. Get Bookings
         const bookings = await db.booking.findMany({
             where: {
                 startTime: {
@@ -18,12 +31,18 @@ export async function GET(request: NextRequest) {
                     lte: new Date(end),
                 },
             },
-            select: {
-                startTime: true,
-            },
+            select: { startTime: true },
         });
 
-        return NextResponse.json(bookings.map(b => b.startTime));
+        // 3. Filter: Open - Booked = Available
+        // Compare using ISO strings for safety
+        const bookedTimes = new Set(bookings.map(b => b.startTime.toISOString()));
+
+        const availableSlots = openSlots
+            .filter(slot => !bookedTimes.has(slot.startTime.toISOString()))
+            .map(slot => slot.startTime);
+
+        return NextResponse.json(availableSlots);
     } catch (error) {
         console.error('Availability API Error:', error);
         return NextResponse.json({ error: 'Failed to fetch availability' }, { status: 500 });

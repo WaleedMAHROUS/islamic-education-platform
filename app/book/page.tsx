@@ -5,7 +5,7 @@ import { useSearchParams, useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { setHours, setMinutes, isBefore, startOfDay, startOfMonth, endOfMonth } from 'date-fns';
+import { setHours, setMinutes, isBefore, startOfDay, startOfMonth, endOfMonth, endOfDay } from 'date-fns';
 import { Calendar } from "@/components/ui/calendar";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -35,12 +35,8 @@ function BookingContent() {
     const [isSuccess, setIsSuccess] = useState(false);
     const [meetingLink, setMeetingLink] = useState('');
 
-    // Generate time slots (9 AM to 5 PM)
-    const timeSlots = [];
-    for (let i = 9; i < 17; i++) {
-        timeSlots.push(`${i}:00`);
-        timeSlots.push(`${i}:30`);
-    }
+    // Dynamic Time Slots State
+    const [availableSlots, setAvailableSlots] = useState<string[]>([]);
 
     // Fetch availability
     useEffect(() => {
@@ -48,16 +44,32 @@ function BookingContent() {
 
         const fetchAvailability = async () => {
             setIsLoadingAvailability(true);
-            const start = startOfMonth(date).toISOString();
-            const end = endOfMonth(date).toISOString();
+            // const start = startOfMonth(date).toISOString();
+            // const end = endOfMonth(date).toISOString();
 
             try {
-                const res = await fetch(`/api/availability?start=${start}&end=${end}`);
+                // 1. Fetch Booked Slots (for calendar disabling if needed, though API handles filtering)
+                // Actually, let's fetch daily availability when a date is selected for the slots view
+                // For the calendar "dot" indicators, we might need a separate call, but for now let's focus on the slots.
+
+                // Fetch slots for the specific selected DATE
+                const dayStart = startOfDay(date).toISOString();
+                const dayEnd = endOfDay(date).toISOString();
+
+                const res = await fetch(`/api/availability?start=${dayStart}&end=${dayEnd}`);
                 if (res.ok) {
                     const data = await res.json();
-                    setBookedSlots(data.map((d: string) => new Date(d)));
+                    // data is array of ISO strings of available startTimes
+                    // We need to convert them to local "HH:mm" for display
+                    const slots = data.map((d: string) => {
+                        const dateObj = new Date(d);
+                        // Format to HH:mm
+                        return dateObj.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
+                    }).sort();
+                    setAvailableSlots(slots);
                 }
             } catch (error) {
+                console.error(error);
                 toast.error("Failed to load availability.");
             } finally {
                 setIsLoadingAvailability(false);
@@ -65,7 +77,10 @@ function BookingContent() {
         };
 
         fetchAvailability();
-    }, [date?.getMonth(), date?.getFullYear()]); // Refetch on month change
+    }, [date]);
+
+    // Helper to get local timezone
+    const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -84,6 +99,7 @@ function BookingContent() {
 
         setIsSubmitting(true);
 
+        // Construct booking date from the selected time string (HH:mm)
         const [hours, minutes] = selectedTime.split(':').map(Number);
         const bookingDate = setHours(setMinutes(date, minutes), hours);
 
@@ -97,7 +113,7 @@ function BookingContent() {
                     studentEmail: values.email,
                     message: values.message,
                     startTime: bookingDate.toISOString(),
-                    studentTimezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+                    studentTimezone: userTimezone,
                 }),
             });
 
@@ -117,18 +133,18 @@ function BookingContent() {
         }
     };
 
-    const isSlotDisabled = (time: string) => {
-        if (!date) return true;
-        const [h, m] = time.split(':').map(Number);
-        const slotDate = setHours(setMinutes(date, m), h);
+    // const isSlotDisabled = (time: string) => { // REMOVED: API now returns only available slots
+    //     if (!date) return true;
+    //     const [h, m] = time.split(':').map(Number);
+    //     const slotDate = setHours(setMinutes(date, m), h);
 
-        // Past check
-        if (isBefore(slotDate, new Date())) return true;
+    //     // Past check
+    //     if (isBefore(slotDate, new Date())) return true;
 
-        // Booked check
-        // Check if any booked slot is effectively equal to this slot
-        return bookedSlots.some(booked => Math.abs(booked.getTime() - slotDate.getTime()) < 1000);
-    };
+    //     // Booked check
+    //     // Check if any booked slot is effectively equal to this slot
+    //     return bookedSlots.some(booked => Math.abs(booked.getTime() - slotDate.getTime()) < 1000);
+    // };
 
     if (isSuccess) {
         return (
@@ -165,6 +181,9 @@ function BookingContent() {
                 <div className="text-center space-y-2">
                     <h1 className="text-3xl font-bold text-slate-900">Book Your Session</h1>
                     <p className="text-slate-600 font-medium">Scheduling for: <span className="font-bold text-slate-900">{serviceType}</span></p>
+                    <div className="inline-block bg-blue-50 text-blue-700 px-4 py-2 rounded-full text-sm font-semibold border border-blue-100 mt-2">
+                        🌍 Times are shown in your local timezone: {userTimezone}
+                    </div>
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 items-start">
@@ -187,24 +206,26 @@ function BookingContent() {
                             </div>
                             <div className="p-6 flex-1 bg-slate-50/50 max-h-[400px] overflow-y-auto">
                                 <h3 className="text-sm font-semibold mb-4 text-slate-500 flex items-center gap-2">
-                                    <Clock className="w-4 h-4" /> Available Slots (30 min)
+                                    <Clock className="w-4 h-4" /> Available Slots
                                 </h3>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {timeSlots.map(time => {
-                                        const disabled = isSlotDisabled(time);
-                                        return (
+                                {isLoadingAvailability ? (
+                                    <div className="flex items-center justify-center p-4"><Loader2 className="animate-spin h-6 w-6 text-slate-400" /></div>
+                                ) : availableSlots.length === 0 ? (
+                                    <p className="text-sm text-slate-400 italic text-center py-4">No slots available for this date.</p>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-3">
+                                        {availableSlots.map(time => (
                                             <Button
                                                 key={time}
                                                 variant={selectedTime === time ? "default" : "outline"}
                                                 className={`w-full justify-center transition-all ${selectedTime === time ? 'bg-slate-900 shadow-md transform scale-105' : 'hover:bg-indigo-50 hover:text-indigo-700 hover:border-indigo-200'}`}
-                                                disabled={disabled}
                                                 onClick={() => setSelectedTime(time)}
                                             >
                                                 {time}
                                             </Button>
-                                        )
-                                    })}
-                                </div>
+                                        ))}
+                                    </div>
+                                )}
                             </div>
                         </CardContent>
                     </Card>

@@ -18,3 +18,9 @@ model Booking {
   meetingLink  String?  // Can be null if generation fails or pending
   createdAt    DateTime @default(now())
 }
+
+model Availability {
+  id        Int      @id @default(autoincrement())
+  startTime DateTime @unique // Specific date and hour the teacher is open
+  createdAt DateTime @default(now())
+}

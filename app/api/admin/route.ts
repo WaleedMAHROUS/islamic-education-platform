@@ -30,7 +30,7 @@ export async function DELETE(request: NextRequest) {
         await sendEmail({
             to: booking.studentEmail,
             subject: `Session Cancelled: ${booking.serviceType}`,
-            body: `Dear ${booking.studentName},\n\nYour session scheduled for ${new Date(booking.startTime).toLocaleString('en-US', { timeZone: userTz })} (${userTz}) has been cancelled by the teacher.\n\nPlease visit the website to reschedule.`
+            body: `Dear ${booking.studentName},\n\nYour session scheduled for ${new Date(booking.startTime).toLocaleString('en-US', { timeZone: userTz })} (${userTz}) has been cancelled by the teacher.\n\nPlease visit the website to reschedule:\nhttps://islamic-education-platform.vercel.app/`
         });
 
         // Delete from DB
