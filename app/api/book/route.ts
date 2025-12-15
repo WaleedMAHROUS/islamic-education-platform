@@ -7,35 +7,17 @@ import { formatInTimeZone } from 'date-fns-tz';
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
-        const { serviceType, studentName, studentEmail, date, time, message, timeZone } = body;
+        const { serviceType, studentName, studentEmail, startTime, message, studentTimezone } = body;
 
         // Validation
-        if (!serviceType || !studentName || !studentEmail || !date || !time) {
+        if (!serviceType || !studentName || !studentEmail || !startTime) {
             return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
         }
 
-        // Combine date and time to ISO string
-        // Note: 'date' is YYYY-MM-DD, 'time' is HH:mm
-        // The time coming from frontend is "Local" time but we need to create a Date object correctly.
-        // Actually, the frontend sends just strings. We should trust the frontend's date/time implies a specific instant
-        // BUT standard Date construction `new Date("2023-01-01T10:00")` uses local server time or UTC depending on env.
-        // To be safe and respect the `timeZone` sent by user, we should treat this carefully.
-
-        // HOWEVER, consistent with previous logic:
-        // Let's assume the frontend sends a valid ISO string or we construct it.
-        // Previous working code used: ` new Date(startTime)` where startTime was ISO.
-        // NOW, the frontend is sending separated date/time?
-        // Let's check what frontend sends.
-        // The frontend `onSubmit` says: 
-        // values.date (Date obj) -> formatted to string? 
-        // Let's look at frontend submit handler in my memory or assume standard.
-        // I'll stick to the "combine" logic I attempted: `new Date(`${date}T${time}:00`)` which creates a local date object.
-        // If the server is UTC (Vercel), this is UTC.
-
-        const startDateTime = new Date(`${date}T${time}:00`);
+        const startDateTime = new Date(startTime);
 
         // Default to UTC if not provided
-        const userTz = timeZone || 'UTC';
+        const userTz = studentTimezone || 'UTC';
 
         // Transactional check: ensure slot is free
         // We must check if a booking exists at this time.
