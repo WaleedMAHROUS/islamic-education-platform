@@ -3,10 +3,11 @@ import nodemailer from 'nodemailer';
 interface EmailPayload {
     to: string;
     subject: string;
-    body: string;
+    body: string; // Plain text fallback
+    html?: string; // HTML content
 }
 
-export async function sendEmail({ to, subject, body }: EmailPayload): Promise<void> {
+export async function sendEmail({ to, subject, body, html }: EmailPayload): Promise<void> {
     const user = process.env.GMAIL_USER;
     const pass = process.env.GMAIL_APP_PASSWORD;
 
@@ -30,7 +31,7 @@ export async function sendEmail({ to, subject, body }: EmailPayload): Promise<vo
             to: to,
             subject: subject,
             text: body,
-            // html: body.replace(/\n/g, '<br>'), // Optional
+            html: html || body.replace(/\n/g, '<br>'),
         });
 
         console.log(`[EMAIL SENT] MessageId: ${info.messageId} To: ${to}`);

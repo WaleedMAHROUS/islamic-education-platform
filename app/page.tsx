@@ -37,6 +37,13 @@ export default function Home() {
       </div>
 
       <main className="max-w-5xl w-full z-10 space-y-16 text-center">
+        {/* Navigation / Header */}
+        <div className="flex justify-end w-full px-4 mb-8">
+          <Link href="/about" className="text-sm font-semibold text-slate-600 hover:text-indigo-600 transition-colors flex items-center gap-2">
+            About Your Teacher <span className="bg-indigo-100 text-indigo-700 px-2 py-0.5 rounded-full text-xs">New</span>
+          </Link>
+        </div>
+
         <div className="space-y-6">
           <h1 className="text-4xl md:text-6xl font-extrabold tracking-tight text-slate-900 drop-shadow-sm">
             What would you like to learn?
