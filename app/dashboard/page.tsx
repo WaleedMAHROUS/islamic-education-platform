@@ -26,7 +26,7 @@ export default function AdminDashboard() {
         }
     };
 
-    const handleCancel = async (id: number) => {
+    const handleCancel = async (id: string) => {
         if (!confirm('Are you sure you want to cancel this session? An email will be sent to the student.')) return;
 
         const res = await fetch(`/api/admin?id=${id}&token=${token}`, {

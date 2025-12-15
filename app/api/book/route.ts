@@ -117,6 +117,11 @@ export async function POST(request: NextRequest) {
                         </div>
                         <br/>
                         <p>See you soon!</p>
+                        <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;" />
+                        <p style="font-size: 12px; color: #6b7280; text-align: center;">
+                            Need to reschedule? <a href="https://islamic-education-platform.vercel.app/cancel/${booking.id}" style="color: #ef4444; text-decoration: underline;">Cancel this session</a>
+                            <br/>(Allowed up to 1 hour before start time)
+                        </p>
                     </div>
                 `
             });

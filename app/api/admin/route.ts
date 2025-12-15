@@ -18,7 +18,7 @@ export async function DELETE(request: NextRequest) {
 
     try {
         const booking = await db.booking.findUnique({
-            where: { id: parseInt(bookingId) }
+            where: { id: bookingId }
         });
 
         if (!booking) {
@@ -35,7 +35,7 @@ export async function DELETE(request: NextRequest) {
 
         // Delete from DB
         await db.booking.delete({
-            where: { id: parseInt(bookingId) }
+            where: { id: bookingId }
         });
 
         return NextResponse.json({ success: true });

@@ -8,7 +8,7 @@ datasource db {
 }
 
 model Booking {
-  id           Int      @id @default(autoincrement())
+  id           String   @id @default(cuid())
   serviceType  String   // "Quran", "IslamicStudies", "Arabic"
   studentName  String
   studentEmail String
