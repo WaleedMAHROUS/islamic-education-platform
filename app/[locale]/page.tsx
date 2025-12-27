@@ -5,8 +5,10 @@ import Link from 'next/link';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { BookOpen, Globe, GraduationCap, AlertCircle } from "lucide-react";
 import LanguageSwitcher from '@/components/language-switcher';
+import { use } from 'react';
 
-export default function Home({ params: { locale } }: { params: { locale: string } }) {
+export default function Home({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = use(params);
     const t = useTranslations('home');
 
     const services = [

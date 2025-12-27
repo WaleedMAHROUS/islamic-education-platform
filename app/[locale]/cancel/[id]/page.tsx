@@ -1,17 +1,18 @@
 'use client';
 
 import { useTranslations } from 'next-intl';
-import { useState } from 'react';
+import { useState, use } from 'react';
 import { useParams, useRouter } from 'next/navigation';
 import { Button } from "@/components/ui/button";
 import { Loader2, AlertTriangle, CheckCircle2 } from "lucide-react";
 import LanguageSwitcher from '@/components/language-switcher';
 
-export default function CancelBookingPage({ params: { locale } }: { params: { locale: string } }) {
+export default function CancelBookingPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = use(params);
     const t = useTranslations('cancellation');
     const router = useRouter();
-    const params = useParams();
-    const id = params.id as string;
+    const urlParams = useParams(); // Renamed to avoid conflict with prop 'params'
+    const id = urlParams.id as string;
 
     const [isCancelling, setIsCancelling] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
