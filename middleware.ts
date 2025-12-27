@@ -20,7 +20,6 @@ export default function middleware(request: NextRequest) {
 export const config = {
     // Only run middleware on pages starting with a locale
     matcher: [
-        '/(ar|en)/:path*',
-        '/(ar|en)'
+        '/((?!api|_next|.*\\..*).*)',
     ]
 };
