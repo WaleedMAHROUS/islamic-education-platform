@@ -18,9 +18,10 @@ export const config = {
     // - _next (Next.js internals)
     // - Dashboard pages (keep English-only)
     // - static files
+    // - The root path '/' (so language selector works)
     matcher: [
         '/',
         '/(ar|en)/:path*',
-        '/((?!api|_next|_vercel|dashboard|.*\\..*).*)'
+        '/((?!api|_next|_vercel|dashboard|.*\\..*|^/$).*)'
     ]
 };
