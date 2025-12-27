@@ -4,7 +4,7 @@ import { notFound } from 'next/navigation';
 import { locales } from '@/i18n/config';
 import { getLocaleDirection } from '@/i18n/request';
 import { Inter } from 'next/font/google';
-import '../globals.css';
+import '../../globals.css';
 
 const inter = Inter({ subsets: ['latin'] });
 
