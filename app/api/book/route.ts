@@ -4,6 +4,7 @@ import { generateMeetingLink } from '@/lib/meeting';
 import { sendEmail } from '@/lib/email';
 import { formatInTimeZone } from 'date-fns-tz';
 import { generateGoogleCalendarLink, generateOutlookCalendarLink } from '@/lib/calendar';
+import { getBookingConfirmationEmail } from '@/lib/email-templates';
 
 export async function POST(request: NextRequest) {
     try {
@@ -60,6 +61,7 @@ export async function POST(request: NextRequest) {
                 message,
                 startTime: startDateTime,
                 studentTimezone: userTz,
+                preferredLanguage: body.locale || 'en',
                 meetingLink,
             },
         });
@@ -71,6 +73,7 @@ export async function POST(request: NextRequest) {
         // Email Styles
         const buttonStyle = 'display: inline-block; padding: 10px 20px; color: white; background-color: #4F46E5; text-decoration: none; border-radius: 5px; margin-right: 10px; font-weight: bold;';
         const linkStyle = 'color: #4F46E5; text-decoration: underline;';
+
 
         // Send Emails
         try {
@@ -96,34 +99,27 @@ export async function POST(request: NextRequest) {
                 `
             });
 
-            // 2. To Student
+            // 2. To Student (Localized)
+            // Extract locale from request body or default to English
+            const locale = body.locale || 'en';
+
+            const studentEmailHtml = getBookingConfirmationEmail({
+                studentName,
+                serviceType,
+                startTime: startDateTime.toISOString(),
+                meetingLink,
+                timeZone: userTz,
+                bookingId: booking.id,
+                locale
+            });
+
             await sendEmail({
                 to: studentEmail,
-                subject: `Booking Confirmed: ${serviceType}`,
-                body: `Dear ${studentName},\nYour session is confirmed.\nTime: ${studentDate}\nSubject: ${serviceType}\nJoin here: ${meetingLink}`,
-                html: `
-                    <div style="font-family: sans-serif; padding: 20px;">
-                        <h2>Booking Confirmed! ✅</h2>
-                        <p>Dear ${studentName},</p>
-                        <p>Your session for <strong>${serviceType}</strong> has been confirmed.</p>
-                        <p><strong>Time:</strong> ${studentDate}</p>
-                        <br/>
-                        <a href="${meetingLink}" style="${buttonStyle}">Join Google Meet</a>
-                        <br/><br/>
-                        <div style="background: #f3f4f6; padding: 15px; border-radius: 8px;">
-                            <p style="margin-top:0;"><strong>📅 Add to your calendar:</strong></p>
-                            <a href="${googleCalLink}" style="${linkStyle}">Google Calendar</a> &nbsp;&bull;&nbsp; 
-                            <a href="${outlookCalLink}" style="${linkStyle}">Outlook</a>
-                        </div>
-                        <br/>
-                        <p>See you soon!</p>
-                        <hr style="border:0; border-top:1px solid #eee; margin: 20px 0;" />
-                        <p style="font-size: 12px; color: #6b7280; text-align: center;">
-                            Need to reschedule? <a href="https://islamic-education-platform.vercel.app/cancel/${booking.id}" style="color: #ef4444; text-decoration: underline;">Cancel this session</a>
-                            <br/>(Allowed up to 1 hour before start time)
-                        </p>
-                    </div>
-                `
+                subject: locale === 'ar' ? `تم تأكيد الحجز: ${serviceType} ✅` : `Booking Confirmed: ${serviceType} ✅`,
+                body: locale === 'ar'
+                    ? `تم تأكيد حجزك لـ ${serviceType}. الوقت: ${studentDate}. رابط اللقاء: ${meetingLink}`
+                    : `Your booking for ${serviceType} is confirmed. Time: ${studentDate}. Join: ${meetingLink}`,
+                html: studentEmailHtml
             });
         } catch (emailError) {
             console.error('Failed to send emails', emailError);

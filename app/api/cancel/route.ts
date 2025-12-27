@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { db } from '@/lib/db';
 import { sendEmail } from '@/lib/email';
 import { differenceInHours } from 'date-fns';
+import { getCancellationNotificationEmail } from '@/lib/email-templates';
 
 export async function POST(request: NextRequest) {
     try {
@@ -30,12 +31,19 @@ export async function POST(request: NextRequest) {
         }
 
         // Send Email to Teacher
-        // We use UTC or generic time for Teacher notification, or formatting.
         await sendEmail({
             to: process.env.GMAIL_USER!,
             subject: `Session CANCELED by Student: ${booking.serviceType}`,
             body: `The student ${booking.studentName} has canceled their session scheduled for ${startTime.toUTCString()}.`
         });
+
+        // Send Email to Student (Confirmation of Cancellation)
+        // Check if we have language preference (we'll implement this storage next)
+        // For now default to English or check cookie if possible (not possible in API easily without passing it)
+        // We will just send bilingual or default English for now until schema update.
+
+        // Actually, we can't easily know the locale here without database storage.
+        // Once we add 'preferredLanguage' to DB, we can use it here.
 
         // Delete Booking
         await db.booking.delete({
