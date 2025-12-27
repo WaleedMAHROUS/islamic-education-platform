@@ -1,0 +1,135 @@
+{
+    "common": {
+        "loading": "Loading...",
+        "error": "Error",
+        "success": "Success",
+        "cancel": "Cancel",
+        "confirm": "Confirm",
+        "close": "Close"
+    },
+    "languageSelector": {
+        "title": "Choose Your Language",
+        "subtitle": "Select your preferred language to continue",
+        "english": "English",
+        "arabic": "العربية"
+    },
+    "home": {
+        "title": "What would you like to learn?",
+        "subtitle": "Choose from our educational services",
+        "aboutTeacher": "About Your Teacher",
+        "newBadge": "New",
+        "services": {
+            "quran": {
+                "title": "Quran Recitation & Memorization",
+                "description": "Learn proper Tajweed rules and memorize the Holy Quran with structured guidance"
+            },
+            "islamicStudies": {
+                "title": "Islamic Studies",
+                "description": "Comprehensive lessons on Aqeedah, Fiqh, and the teachings of Prophet Muhammad (ﷺ)"
+            },
+            "arabic": {
+                "title": "Arabic Language",
+                "description": "Master Modern Standard Arabic and understand the language of the Quran"
+            }
+        },
+        "bookNow": "Book a Session",
+        "eligibility": {
+            "title": "Current Service Availability",
+            "content": "We currently accept **male students aged 12 and above**. We are working to expand our services to include children (ages 6-12) and female students in the near future, إن شاء الله.",
+            "thankyou": "Thank you for your understanding."
+        },
+        "footer": {
+            "tagline": "Learn Islam with authentic knowledge",
+            "allRights": "All rights reserved"
+        }
+    },
+    "about": {
+        "title": "About Your Teacher",
+        "name": "Waleed Mahrous",
+        "nativeSpeaker": "Native Arabic Speaker",
+        "fluentEnglish": "Fluent English",
+        "intro": "Waleed Mahrous is an Egyptian native Arabic speaker with a diverse academic and professional background. He combines a scientific mindset with deep Islamic learning to provide a structured and comprehensive educational experience. Passionate about sharing knowledge, he specializes in teaching Quran, Tajweed, and Islamic Studies to non-Arabic speakers throughout the world.",
+        "education": {
+            "title": "Academic & Islamic Education",
+            "environmental": {
+                "title": "Environmental Science",
+                "degree": "Master of Science (M.Sc.)",
+                "institution": "Mie University, Japan (2018)"
+            },
+            "veterinary": {
+                "title": "Veterinary Medicine",
+                "degree": "Bachelor's Degree",
+                "institution": "Cairo University, Egypt (2007)"
+            },
+            "sharia": {
+                "title": "Islamic Sharia",
+                "degree": "Diploma Program",
+                "institution": "Alwasatiyyah Islamic Institute (under Al-Azhar University)"
+            },
+            "zad": {
+                "title": "Zad Academy",
+                "degree": "Online Course (Arabic & English)",
+                "institution": "Completed with Excellence"
+            }
+        },
+        "career": {
+            "title": "Professional Career",
+            "description": "Currently working for a Japanese company innovating in biofuel production from microalgae, Waleed brings professional discipline and cross-cultural communication skills to his teaching practice."
+        },
+        "teaching": {
+            "title": "Teaching Experience",
+            "description": "Experienced in teaching Quran, Tajweed rules, Arabic, and Islamic studies to non-Arabic speakers online. While currently working towards memorizing the entire Quran, he possesses proper knowledge of Tajweed rules and strives for excellence in recitation."
+        },
+        "community": {
+            "title": "Community Service",
+            "description": "Waleed holds regular, free educational activities at his local mosque, teaching three subjects to both elders and children. His goal is to help non-Arabic speakers learn Islam properly according to the Sunnah of the Prophet Muhammad (peace be upon him) and his companions."
+        },
+        "backToHome": "Back to Home"
+    },
+    "booking": {
+        "title": "Book Your Session",
+        "selectService": "Select Service Type",
+        "services": {
+            "quran": "Quran Recitation & Memorization",
+            "islamicStudies": "Islamic Studies",
+            "arabic": "Arabic Language"
+        },
+        "yourDetails": "Your Details",
+        "name": "Full Name",
+        "namePlaceholder": "Enter your full name",
+        "email": "Email Address",
+        "emailPlaceholder": "your.email@example.com",
+        "message": "Message (Optional)",
+        "messagePlaceholder": "Any specific topics or questions?",
+        "selectDateTime": "Select Date & Time",
+        "meetingInfo": "Online via Google Meet",
+        "timezoneBadge": "Booking in your local time",
+        "noSlotsAvailable": "No slots available for this day",
+        "selectTimePrompt": "Please select a date and time to continue",
+        "confirmBooking": "Confirm Booking",
+        "bookingInProgress": "Booking...",
+        "bookingSuccess": "Booking Confirmed!",
+        "bookingSuccessMessage": "Your session has been scheduled. Check your email for confirmation and meeting details.",
+        "bookingError": "Booking Failed",
+        "returnHome": "Return to Home",
+        "tryAgain": "Try Again",
+        "eligibility": {
+            "title": "Eligibility Confirmation",
+            "checkbox": "I confirm that I am a male student aged 12 or above.",
+            "required": "You must confirm eligibility to proceed with booking."
+        }
+    },
+    "cancellation": {
+        "title": "Cancel Session?",
+        "subtitle": "Are you sure you want to cancel this booking? This action cannot be undone.",
+        "timeLimit": "(Cancellations allowed up to 1 hour before start time)",
+        "confirmButton": "Yes, Cancel Session",
+        "cancelling": "Cancelling...",
+        "goBack": "Go Back",
+        "success": {
+            "title": "Booking Cancelled",
+            "message": "Your session has been successfully cancelled. The teacher has been notified.",
+            "returnHome": "Return to Home"
+        }
+    }
+}
