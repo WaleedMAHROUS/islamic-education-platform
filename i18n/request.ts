@@ -9,8 +9,12 @@ export default getRequestConfig(async ({ locale }) => {
     // Validate that the incoming `locale` parameter is valid
     if (!locales.includes(locale as Locale)) notFound();
 
+    const messages = await import(`./messages/${locale}.json`);
+
     return {
-        messages: (await import(`../messages/${locale}.json`)).default
+        messages: messages.default,
+        timeZone: 'Asia/Tokyo',
+        now: new Date()
     };
 });
 
