@@ -32,12 +32,10 @@ export default async function LocaleLayout({
     const direction = getLocaleDirection(locale);
 
     return (
-        <html lang={locale} dir={direction} className={inter.className}>
-            <body>
-                <NextIntlClientProvider messages={messages}>
-                    {children}
-                </NextIntlClientProvider>
-            </body>
-        </html>
+        <NextIntlClientProvider messages={messages}>
+            <div dir={direction} lang={locale}>
+                {children}
+            </div>
+        </NextIntlClientProvider>
     );
 }
