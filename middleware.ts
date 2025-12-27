@@ -8,22 +8,19 @@ export default createMiddleware({
     // Used when no locale matches
     defaultLocale: 'en',
 
-    // Don't redirect if locale is in pathname
-    localePrefix: 'always',
-
-    // Exclude paths that should not be localized
-    pathnames: {
-        // Keep dashboard in English only
-        '/dashboard': '/dashboard',
-        '/dashboard/availability': '/dashboard/availability',
-        '/api/*': '/api/*'
-    }
+    // Always show locale in URL
+    localePrefix: 'always'
 });
 
 export const config = {
     // Match all pathnames except for
     // - API routes
     // - _next (Next.js internals)
+    // - Dashboard pages (keep English-only)
     // - static files
-    matcher: ['/', '/(ar|en)/:path*', '/((?!api|_next|_vercel|.*\\..*).*)']
+    matcher: [
+        '/',
+        '/(ar|en)/:path*',
+        '/((?!api|_next|_vercel|dashboard|.*\\..*).*)'
+    ]
 };
