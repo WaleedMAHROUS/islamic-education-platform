@@ -32,7 +32,6 @@ export const config = {
     // - static files
     // - The root path '/' (so language selector works)
     matcher: [
-        '/(ar|en)/:path*',
         '/((?!api|_next|_vercel|dashboard|.*\\..*).*)'
     ]
 };
