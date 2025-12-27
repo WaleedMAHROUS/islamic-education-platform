@@ -32,3 +32,23 @@ export const generateOutlookCalendarLink = (title: string, startTime: Date, dura
 
     return `https://outlook.live.com/calendar/0/deeplink/compose?${params.toString()}`;
 };
+
+export const generateICSLink = (title: string, startTime: Date, durationMinutes: number = 30, description: string = '', location: string = '') => {
+    const start = startTime.toISOString().replace(/-|:|\.\d\d\d/g, "");
+    const endTime = new Date(startTime.getTime() + durationMinutes * 60000);
+    const end = endTime.toISOString().replace(/-|:|\.\d\d\d/g, "");
+
+    const icsContent =
+        `BEGIN:VCALENDAR
+VERSION:2.0
+BEGIN:VEVENT
+DTSTART:${start}
+DTEND:${end}
+SUMMARY:${title}
+DESCRIPTION:${description}
+LOCATION:${location}
+END:VEVENT
+END:VCALENDAR`;
+
+    return `data:text/calendar;charset=utf8,${encodeURIComponent(icsContent)}`;
+};
