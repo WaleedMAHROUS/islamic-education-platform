@@ -3,30 +3,33 @@ import { enUS, arEG } from 'date-fns/locale';
 import { generateGoogleCalendarLink, generateOutlookCalendarLink, generateICSLink } from './calendar';
 
 interface EmailTemplatePayload {
-    studentName: string;
-    serviceType: string;
-    startTime: string;
-    meetingLink: string;
-    timeZone: string;
-    bookingId?: string;
-    locale?: string;
+  studentName: string;
+  serviceType: string;
+  startTime: string;
+  meetingLink: string;
+  timeZone: string;
+  bookingId?: string;
+  locale?: string;
 }
 
 export function getBookingConfirmationEmail(payload: EmailTemplatePayload) {
-    const isArabic = payload.locale === 'ar';
-    const dateLang = isArabic ? arEG : enUS;
+  const isArabic = payload.locale === 'ar';
+  const dateLang = isArabic ? arEG : enUS;
 
-    const formattedDate = format(new Date(payload.startTime), 'EEEE, MMMM d, yyyy', { locale: dateLang });
-    const formattedTime = format(new Date(payload.startTime), 'h:mm a', { locale: dateLang });
+  const formattedDate = format(new Date(payload.startTime), 'EEEE, MMMM d, yyyy', { locale: dateLang });
+  const formattedTime = format(new Date(payload.startTime), 'h:mm a', { locale: dateLang });
 
-    const googleCalLink = generateGoogleCalendarLink(payload.serviceType, payload.startTime, payload.meetingLink);
-    const outlookLink = generateOutlookCalendarLink(payload.serviceType, payload.startTime, payload.meetingLink);
-    const icsLink = generateICSLink(payload.serviceType, payload.startTime, payload.meetingLink);
+  const startDate = new Date(payload.startTime);
+  const description = `Meeting Link: ${payload.meetingLink}`;
 
-    const cancellationLink = `https://islamic-education-platform.vercel.app/${payload.locale || 'en'}/cancel/${payload.bookingId}`;
+  const googleCalLink = generateGoogleCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
+  const outlookLink = generateOutlookCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
+  const icsLink = generateICSLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
 
-    if (isArabic) {
-        return `
+  const cancellationLink = `https://islamic-education-platform.vercel.app/${payload.locale || 'en'}/cancel/${payload.bookingId}`;
+
+  if (isArabic) {
+    return `
       <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; text-align: right;">
         <h2 style="color: #059669;">تم تأكيد حجزك ✅</h2>
         <p>مرحباً ${payload.studentName}،</p>
@@ -57,10 +60,10 @@ export function getBookingConfirmationEmail(payload: EmailTemplatePayload) {
         </p>
       </div>
     `;
-    }
+  }
 
-    // English Template
-    return `
+  // English Template
+  return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6;">
       <h2 style="color: #059669;">Booking Confirmed! ✅</h2>
       <p>Hi ${payload.studentName},</p>
@@ -94,15 +97,15 @@ export function getBookingConfirmationEmail(payload: EmailTemplatePayload) {
 }
 
 export function getCancellationNotificationEmail(payload: EmailTemplatePayload) {
-    // Cancellation notification usually goes to the teacher (often English preferred), 
-    // but if we want to confirm to student in their language we can add logic here.
-    // For now, let's keep it simple or bilingual since this notifies the teacher mainly 
-    // but we can also send one to the student.
+  // Cancellation notification usually goes to the teacher (often English preferred), 
+  // but if we want to confirm to student in their language we can add logic here.
+  // For now, let's keep it simple or bilingual since this notifies the teacher mainly 
+  // but we can also send one to the student.
 
-    const isArabic = payload.locale === 'ar';
+  const isArabic = payload.locale === 'ar';
 
-    if (isArabic) {
-        return `
+  if (isArabic) {
+    return `
       <div dir="rtl" style="font-family: Arial, sans-serif; padding: 20px; text-align: right;">
         <h2 style="color: #dc2626;">تم إلغاء الحجز ❌</h2>
         <p>مرحباً ${payload.studentName}،</p>
@@ -114,9 +117,9 @@ export function getCancellationNotificationEmail(payload: EmailTemplatePayload) 
         <p>نأمل أن نراك في وقت آخر.</p>
       </div>
     `;
-    }
+  }
 
-    return `
+  return `
     <div style="font-family: Arial, sans-serif; padding: 20px;">
       <h2 style="color: #dc2626;">Booking Cancelled ❌</h2>
       <p>Hi ${payload.studentName},</p>
