@@ -30,7 +30,7 @@ export default function LanguageSelector() {
             <BookOpen className="w-10 h-10 text-emerald-600" />
           </div>
           <h1 className="text-4xl md:text-5xl font-extrabold text-slate-900 mb-4">
-            Islamic Education Platform
+            Islamic Education Platform (v2)
           </h1>
           <p className="text-xl text-slate-600 mb-2">منصة التعليم الإسلامي</p>
           <p className="text-lg text-slate-500">Choose Your Language / اختر لغتك</p>
