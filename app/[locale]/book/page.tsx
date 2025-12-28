@@ -96,6 +96,8 @@ function BookingContent({ locale }: { locale: string }) {
 
         const [hours, minutes] = selectedTime.split(':').map(Number);
         const bookingDate = setHours(setMinutes(date, minutes), hours);
+        bookingDate.setSeconds(0);
+        bookingDate.setMilliseconds(0);
 
         try {
             const res = await fetch('/api/book', {

@@ -54,15 +54,12 @@ export default function AvailabilityPage() {
         return setHours(setMinutes(date, minutes), hours);
     };
 
-    const isSlotOpen = (slotTime: Date) => {
-        // Simple check (could optimize with map/set)
-        // Check if any availability matches this time (within small margin/seconds)
-        return availabilities.some(a => Math.abs(new Date(a.startTime).getTime() - slotTime.getTime()) < 1000);
-    };
+
 
     const handleMouseDown = (date: Date, slotIndex: number) => {
         const slotTime = getSlotTime(date, slotIndex);
-        const currentlyOpen = isSlotOpen(slotTime);
+        const tolerance = 5 * 60 * 1000;
+        const currentlyOpen = availabilities.some(a => Math.abs(new Date(a.startTime).getTime() - slotTime.getTime()) < tolerance);
 
         setIsDragging(true);
         setDragStart({ date: date.toISOString(), index: slotIndex });
@@ -219,8 +216,10 @@ export default function AvailabilityPage() {
                                     <div className="flex-1 grid grid-cols-48 gap-px bg-gray-200 border-l border-r border-b">
                                         {slots.map(idx => {
                                             const slotTime = getSlotTime(d, idx);
-                                            const isOpen = isSlotOpen(slotTime);
-                                            const isBooked = bookings.some(b => Math.abs(new Date(b.startTime).getTime() - slotTime.getTime()) < 1000);
+                                            // Relaxed matching for both availability and bookings to finding anything within the same minute or so
+                                            const tolerance = 5 * 60 * 1000; // 5 minute tolerance
+                                            const isOpen = availabilities.some(a => Math.abs(new Date(a.startTime).getTime() - slotTime.getTime()) < tolerance);
+                                            const isBooked = bookings.some(b => Math.abs(new Date(b.startTime).getTime() - slotTime.getTime()) < tolerance);
 
                                             const isSelected = isInSelection(dateIso, idx);
 
