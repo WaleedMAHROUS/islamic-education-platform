@@ -38,8 +38,16 @@ export async function GET(request: NextRequest) {
         // Compare using ISO strings for safety
         const bookedTimes = new Set(bookings.map(b => b.startTime.toISOString()));
 
+        // 24-hour buffer logic
+        const now = new Date();
+        const bufferTime = new Date(now.getTime() + 24 * 60 * 60 * 1000); // Now + 24 hours
+
         const availableSlots = openSlots
-            .filter(slot => !bookedTimes.has(slot.startTime.toISOString()))
+            .filter(slot => {
+                const isNotBooked = !bookedTimes.has(slot.startTime.toISOString());
+                const isAfterBuffer = slot.startTime > bufferTime;
+                return isNotBooked && isAfterBuffer;
+            })
             .map(slot => slot.startTime);
 
         return NextResponse.json(availableSlots);

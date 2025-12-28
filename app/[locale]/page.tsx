@@ -108,7 +108,7 @@ export default function Home({ params }: { params: Promise<{ locale: string }> }
                 </div>
             </main>
 
-            <footer className="absolute bottom-6 text-sm text-slate-400 font-medium text-center max-w-md">
+            <footer className="mt-12 text-sm text-slate-400 font-medium text-center max-w-md pb-6 sticky bottom-0 z-0">
                 <p>{t('footer.tagline')}</p>
                 <p className="text-xs mt-1">© 2025 Islamic Education Platform. {t('footer.allRights')}.</p>
             </footer>

@@ -104,6 +104,9 @@ export function getCancellationNotificationEmail(payload: EmailTemplatePayload) 
 
   const isArabic = payload.locale === 'ar';
 
+  const dateLang = isArabic ? arEG : enUS;
+  const formattedDate = formatInTimeZone(new Date(payload.startTime), payload.timeZone, 'EEEE, MMMM d, yyyy h:mm a', { locale: dateLang });
+
   if (isArabic) {
     return `
       <div dir="rtl" style="font-family: Arial, sans-serif; padding: 20px; text-align: right;">
@@ -112,7 +115,7 @@ export function getCancellationNotificationEmail(payload: EmailTemplatePayload) 
         <p>تم إلغاء جلستك التالية بناءً على طلبك:</p>
         <ul style="list-style-position: inside;">
           <li><strong>نوع الجلسة:</strong> ${payload.serviceType}</li>
-          <li><strong>الوقت:</strong> ${payload.startTime}</li>
+          <li><strong>الوقت:</strong> ${formattedDate} (${payload.timeZone})</li>
         </ul>
         <p>نأمل أن نراك في وقت آخر.</p>
       </div>
@@ -126,7 +129,7 @@ export function getCancellationNotificationEmail(payload: EmailTemplatePayload) 
       <p>Your session has been cancelled as requested:</p>
       <ul>
         <li><strong>Service:</strong> ${payload.serviceType}</li>
-        <li><strong>Time:</strong> ${payload.startTime}</li>
+        <li><strong>Time:</strong> ${formattedDate} (${payload.timeZone})</li>
       </ul>
       <p>You are welcome to book again at any time.</p>
     </div>

@@ -35,6 +35,9 @@ export default async function LocaleLayout({
         <NextIntlClientProvider messages={messages}>
             <div dir={direction} lang={locale}>
                 {children}
+                <a href={`/${locale}`} className="fixed bottom-4 right-4 z-50 bg-white p-3 rounded-full shadow-lg border hover:scale-110 transition-transform" aria-label="Home">
+                    🏠
+                </a>
             </div>
         </NextIntlClientProvider>
     );
