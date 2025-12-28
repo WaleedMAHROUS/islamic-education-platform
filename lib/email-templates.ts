@@ -1,35 +1,22 @@
-import { format } from 'date-fns';
-import { enUS, arEG } from 'date-fns/locale';
-import { generateGoogleCalendarLink, generateOutlookCalendarLink, generateICSLink } from './calendar';
+import { formatInTimeZone } from 'date-fns-tz';
 
-interface EmailTemplatePayload {
-  studentName: string;
-  serviceType: string;
-  startTime: string;
-  meetingLink: string;
-  timeZone: string;
-  bookingId?: string;
-  locale?: string;
-}
+// ... (imports)
 
-export function getBookingConfirmationEmail(payload: EmailTemplatePayload) {
-  const isArabic = payload.locale === 'ar';
-  const dateLang = isArabic ? arEG : enUS;
+// Inside function
+const formattedDate = formatInTimeZone(new Date(payload.startTime), payload.timeZone, 'EEEE, MMMM d, yyyy', { locale: dateLang });
+const formattedTime = formatInTimeZone(new Date(payload.startTime), payload.timeZone, 'h:mm a', { locale: dateLang });
 
-  const formattedDate = format(new Date(payload.startTime), 'EEEE, MMMM d, yyyy', { locale: dateLang });
-  const formattedTime = format(new Date(payload.startTime), 'h:mm a', { locale: dateLang });
+const startDate = new Date(payload.startTime);
+const description = `Meeting Link: ${payload.meetingLink}`;
 
-  const startDate = new Date(payload.startTime);
-  const description = `Meeting Link: ${payload.meetingLink}`;
+const googleCalLink = generateGoogleCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
+const outlookLink = generateOutlookCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
+const icsLink = generateICSLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
 
-  const googleCalLink = generateGoogleCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
-  const outlookLink = generateOutlookCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
-  const icsLink = generateICSLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
+const cancellationLink = `https://islamic-education-platform.vercel.app/${payload.locale || 'en'}/cancel/${payload.bookingId}`;
 
-  const cancellationLink = `https://islamic-education-platform.vercel.app/${payload.locale || 'en'}/cancel/${payload.bookingId}`;
-
-  if (isArabic) {
-    return `
+if (isArabic) {
+  return `
       <div dir="rtl" style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6; text-align: right;">
         <h2 style="color: #059669;">تم تأكيد حجزك ✅</h2>
         <p>مرحباً ${payload.studentName}،</p>
@@ -60,10 +47,10 @@ export function getBookingConfirmationEmail(payload: EmailTemplatePayload) {
         </p>
       </div>
     `;
-  }
+}
 
-  // English Template
-  return `
+// English Template
+return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; line-height: 1.6;">
       <h2 style="color: #059669;">Booking Confirmed! ✅</h2>
       <p>Hi ${payload.studentName},</p>
