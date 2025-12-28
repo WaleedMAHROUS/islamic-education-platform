@@ -331,7 +331,8 @@ function BookingContent({ locale }: { locale: string }) {
     );
 }
 
-export default function BookingPage({ params: { locale } }: { params: { locale: string } }) {
+export default async function BookingPage({ params }: { params: Promise<{ locale: string }> }) {
+    const { locale } = await params;
     return (
         <Suspense fallback={<div className="min-h-screen bg-slate-50 flex items-center justify-center"><Loader2 className="w-10 h-10 animate-spin text-indigo-200" /></div>}>
             <BookingContent locale={locale} />
