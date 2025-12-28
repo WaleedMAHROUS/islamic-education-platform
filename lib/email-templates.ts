@@ -26,7 +26,7 @@ export function getBookingConfirmationEmail(payload: EmailTemplatePayload) {
   const outlookLink = generateOutlookCalendarLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
   const icsLink = generateICSLink(payload.serviceType, startDate, 30, description, payload.meetingLink);
 
-  const cancellationLink = `https://islamic-education-v2.vercel.app/${payload.locale || 'en'}/cancel/${payload.bookingId}`;
+  const cancellationLink = `https://islamic-education-platform.vercel.app/${payload.locale || 'en'}/cancel/${payload.bookingId}`;
 
   if (isArabic) {
     return `
